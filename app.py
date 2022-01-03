@@ -1,13 +1,20 @@
 #!/usr/bin/env python
+import io
 from importlib import import_module
 import os
-from flask import Flask, render_template, Response
+
+from PIL import Image
+from flask import Flask, render_template, Response, request
 
 # import camera driver
+from werkzeug.utils import secure_filename
+
+import yolo_img
+
 if os.environ.get('CAMERA'):
     Camera = import_module('camera_' + os.environ['CAMERA']).Camera
 else:
-    from camera import Camera
+    from camera_opencv import Camera
 
 # Raspberry Pi camera module (requires picamera package)
 # from camera_pi import Camera
@@ -35,6 +42,24 @@ def video_feed():
     return Response(gen(Camera()),
                     mimetype='multipart/x-mixed-replace; boundary=frame')
 
+@app.route('/image',methods=['POST'])
+def image():
+    if request.method == 'POST':
+        f = request.files['file']
+        path ='./img'
+        f.save(path+f.filename)
+        img_url = yolo_img.yolo_detect(path + f.filename)
+        with open(img_url, 'rb') as f:
+            a = f.read()
+        '''对读取的图片进行处理'''
+        img_stream = io.BytesIO(a)
+        img = Image.open(img_stream)
+
+        imgByteArr = io.BytesIO()
+        img.save(imgByteArr, format='PNG')
+        imgByteArr = imgByteArr.getvalue()
+        print(imgByteArr)
+        return imgByteArr
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', threaded=True)
