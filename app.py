@@ -5,6 +5,8 @@ import os
 
 from PIL import Image
 from flask import Flask, render_template, Response, request
+from flask_cors import CORS
+
 
 # import camera driver
 from werkzeug.utils import secure_filename
@@ -20,7 +22,7 @@ else:
 # from camera_pi import Camera
 
 app = Flask(__name__)
-
+CORS(app, supports_credentials=True)
 
 @app.route('/')
 def index():
