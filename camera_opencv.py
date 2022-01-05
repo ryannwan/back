@@ -1,11 +1,12 @@
+import os
+import time
+
+import cv2
+import imutils
+import numpy as np
 
 from base_camera import BaseCamera
-import numpy as np
-import argparse
-import imutils
-import time
-import cv2
-import os
+
 
 class Camera(BaseCamera):
     video_source = 0
@@ -24,23 +25,15 @@ class Camera(BaseCamera):
         # camera = cv2.VideoCapture(Camera.video_source)
         # if not camera.isOpened():
         #     raise RuntimeError('Could not start camera.')
+
+        # while True:
+        #     # read current frame
+        #     _, img = camera.read()
+        #
+        #     # encode as a jpeg image and return it
+        #     yield cv2.imencode('.jpg', img)[1].tobytes()
         inputpath = "./video/videoplayback2.mp4"
         outputpath = "./output/videoplayback2.avi"
-        # construct the argument parse and parse the arguments
-        # ap = argparse.ArgumentParser()
-        # ap.add_argument("-i", "--input", default=inputpath,
-        #                 help="path to input video")
-        # ap.add_argument("-o", "--output", default=outputpath,
-        #                 help="path to output video")
-        # ap.add_argument("-y", "--yolo", default="./yolo-coco",
-        #                 help="base path to YOLO directory")
-        # ap.add_argument("-c", "--confidence", type=float, default=0.5,
-        #                 help="minimum probability to filter weak detections")
-        # ap.add_argument("-t", "--threshold", type=float, default=0.3,
-        #                 help="threshold when applyong non-maxima suppression")
-        # args = vars(ap.parse_args())
-        ###################################################
-        # load the COCO class labels our YOLO model was trained on
         labelsPath = os.path.sep.join(["./yolo-coco", "coco.names"])
         LABELS = open(labelsPath).read().strip().split("\n")
 
@@ -184,7 +177,7 @@ class Camera(BaseCamera):
 
             # write the output frame to disk
             writer.write(frame)
+            cv2.imshow('input_image', frame)
+            cv2.waitKey(1)
             # encode as a jpeg image and return it
             yield cv2.imencode('.jpg', frame)[1].tobytes()
-        writer.release()
-        vs.release()
