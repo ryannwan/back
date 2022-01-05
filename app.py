@@ -12,9 +12,8 @@ from flask_cors import CORS
 from werkzeug.utils import secure_filename
 
 import yolo_img
-from camera_opencv import Camera
+from video import Camera
 
-from camera_video import Video
 
 # Raspberry Pi camera module (requires picamera package)
 # from camera_pi import Camera
